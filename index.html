@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descubre tu Cinturón Ideal | zômai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-white: #ffffff;
+      --card-bg: #f6f4d2; /* Marfil suave de la paleta */
+      --text-main: #1f1f1f;
+      --text-muted: #666666;
+      --accent-terracotta: #8d3429; /* Rojo Terracota oficial */
+      --accent-miel: #bc856e; /* Rosa Miel oficial */
+      --hover-menta: #cbdfbd; /* Verde Menta oficial */
+      --border-color: #e5e0dc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-white);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
+      padding: 40px 32px;
+      box-shadow: 0 10px 30px rgba(141, 52, 41, 0.08);
+      position: relative;
+    }
+
+    /* Barra de Progreso */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(188, 133, 110, 0.2);
+      border-radius: 3px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-terracotta);
+      transition: width 0.3s ease;
+    }
+
+    /* Títulos */
+    h1, h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--text-main);
+      text-align: center;
+    }
+
+    h1 { font-size: 2rem; margin-bottom: 12px; color: var(--accent-terracotta); }
+    h2 { font-size: 1.4rem; margin-bottom: 24px; text-align: left; line-height: 1.4; }
+    
+    p.subtitle {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    /* Pantallas */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* Opciones */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: var(--bg-white);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px 20px;
+      text-align: left;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      line-height: 1.4;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent-miel);
+      background-color: var(--hover-menta);
+      transform: translateY(-2px);
+    }
+
+    .option-btn::after {
+      content: '→';
+      font-size: 1.1rem;
+      color: var(--accent-terracotta);
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .option-btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Pantalla Resultado */
+    .result-card {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .result-tag {
+      display: inline-block;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--accent-miel);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .product-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.3rem;
+      margin-bottom: 16px;
+      color: var(--accent-terracotta);
+    }
+
+    .product-desc {
+      font-size: 0.98rem;
+      color: var(--text-main);
+      line-height: 1.7;
+      margin-bottom: 30px;
+      background: var(--bg-white);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    .btn-main {
+      display: inline-block;
+      width: 100%;
+      background: var(--accent-terracotta);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-main:hover {
+      background: #732920;
+    }
+
+    .btn-restart {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 16px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <div class="progress-bar-container" id="progressContainer" style="display: none;">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Pantalla de Inicio -->
+    <div id="startScreen" class="screen active">
+      <h1>zômai</h1>
+      <h2>Descubre tu Cinturón Ideal</h2>
+      <p class="subtitle">Responde 8 breves preguntas interactivas para encontrar la pieza de marroquinería perfecta para tu silueta y estilo diario.</p>
+      <button class="btn-main" onclick="startQuiz()">Comenzar Test</button>
+    </div>
+
+    <!-- Pantalla de Preguntas -->
+    <div id="quizScreen" class="screen">
+      <h2 id="questionText">Cargando pregunta...</h2>
+      <div class="options-grid" id="optionsContainer"></div>
+    </div>
+
+    <!-- Pantalla de Resultado -->
+    <div id="resultScreen" class="screen">
+      <div class="result-card">
+        <span class="result-tag">Tu Match Perfecto</span>
+        <h1 class="product-title" id="productName">Modelo</h1>
+        <p class="product-desc" id="productDescription">Descripción...</p>
+        <button class="btn-main" onclick="alert('Aquí puedes redirigir al carrito o producto de tu tienda')">Ver Modelo en la Tienda</button>
+        <br>
+        <button class="btn-restart" onclick="startQuiz()">Volver a hacer el test</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "1. ¿Cuál es tu objetivo principal con este cinturón?",
+        options: [
+          { text: "Definir y ceñir la cintura para marcar la figura.", val: "fit_corset" },
+          { text: "Enmarcar la cintura de forma cómoda sobre mi ropa.", val: "fit_clean" },
+          { text: "Añadir un toque de arte y contraste a un look neutro.", val: "fit_organic" }
+        ]
+      },
+      {
+        text: "2. En tu día a día, ¿qué prendas sueles llevar?",
+        options: [
+          { text: "Pantalones de tiro alto, faldas ceñidas o blazers.", val: "style_edgy" },
+          { text: "Jeans cómodos, camisas de algodón o vestidos.", val: "style_casual" }
+        ]
+      },
+      {
+        text: "3. ¿Qué paleta de tonos prefieres para tus accesorios?",
+        options: [
+          { text: "Tonos oscuros, fríos o intensos (Negro, Azul, Rojo).", val: "color_cool" },
+          { text: "Tonos cálidos, neutros o piel natural (Café, Estampados).", val: "color_warm" }
+        ]
+      },
+      {
+        text: "4. ¿Qué tan protagonista te gusta que sea tu cinturón?",
+        options: [
+          { text: "Discreto y elegante: un complemento sofisticado.", val: "impact_low" },
+          { text: "El centro de atención: una pieza que destaque al instante.", val: "impact_high" }
+        ]
+      },
+      {
+        text: "5. Si eliges una textura o material principal, ¿cuál sería?",
+        options: [
+          { text: "Cuero liso estructurado con detalles metálicos.", val: "mat_leather" },
+          { text: "Cuero de aspecto artesanal o rústico.", val: "mat_rustic" },
+          { text: "Texturas combinadas (denim o animal print).", val: "mat_print" }
+        ]
+      },
+      {
+        text: "6. ¿Qué tipo de corte o geometría prefieres sobre tu cuerpo?",
+        options: [
+          { text: "Líneas rectadas y limpias con hebillas definidas.", val: "geo_straight" },
+          { text: "Líneas orgánicas y curvas (en forma de pétalo o módulos).", val: "geo_curved" },
+          { text: "Cortes asimétricos en diagonal.", val: "geo_diagonal" }
+        ]
+      },
+      {
+        text: "7. ¿Qué herrajes o detalles te atraen más?",
+        options: [
+          { text: "Ojillos metálicos y múltiples bandas de ajuste.", val: "det_eyelets" },
+          { text: "Doble hebilla clásica y limpia.", val: "det_double" },
+          { text: "Una sola hebilla grande ovalada o circular.", val: "det_single" }
+        ]
+      },
+      {
+        text: "8. ¿En qué momento del día lo llevarías más?",
+        options: [
+          { text: "Para la rutina diaria: trabajo, caminatas y pendientes.", val: "use_daily" },
+          { text: "Para eventos especiales, brunches o eventos creativos.", val: "use_event" }
+        ]
+      }
+    ];
+
+    const products = {
+      ALEJANDRA: {
+        name: "Modelo ALEJANDRA",
+        desc: "Tu perfil busca fuerza, definición y estructura. Con sus tres bandas de ojillos metálicos y su ajuste firme tipo corsé, ALEJANDRA transforma pantalones de tiro alto y camisas en un outfit de alto impacto urbano."
+      },
+      LAURA: {
+        name: "Modelo LAURA",
+        desc: "Buscas el equilibrio perfecto entre elegancia y practicidad diaria. Su silueta limpia en tono azul profundo con doble hebilla frontal enmarca la cintura con la dosis justa de geometría y sofisticación."
+      },
+      ALICIA: {
+        name: "Modelo ALICIA",
+        desc: "Te fascinan los objetos de diseño bien pensados. Su estructura modular con paneles superpuestos en tono denim luce espectacular tanto al frente como en la espalda (360°), ofreciendo un ajuste cómodo y vanguardista."
+      },
+      CRISTINA: {
+        name: "Modelo CRISTINA",
+        desc: "Valoras las texturas naturales, el cuero artesanal y la comodidad orgánica. Con su solapa ancha estilo fajín en tono café y sus hebillas laterales, es el complemento ideal para vestidos de lino y tonos tierra."
+      },
+      AURORA: {
+        name: "Modelo AURORA",
+        desc: "Para ti el accesorio es una obra de arte. AURORA destaca por su tono rojo intenso y sus cortes curvos en forma de pétalo que abrazan el torso, creando una silueta de reloj de arena súper femenina."
+      },
+      GRETA: {
+        name: "Modelo GRETA",
+        desc: "Sabes que un buen accesorio lo cambia todo. Con su estampado de leopardo, corte asimétrico en diagonal y gran hebilla ovalada, GRETA le aporta ese toque instintivo y divertido a tus básicos de todos los días."
+      }
+    };
+
+    let currentStep = 0;
+    let answers = {};
+
+    function startQuiz() {
+      currentStep = 0;
+      answers = {};
+      document.getElementById('startScreen').classList.remove('active');
+      document.getElementById('resultScreen').classList.remove('active');
+      document.getElementById('quizScreen').classList.add('active');
+      document.getElementById('progressContainer').style.display = 'block';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentStep];
+      document.getElementById('questionText').innerText = q.text;
+      
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt.text;
+        btn.onclick = () => selectOption(opt.val);
+        container.appendChild(btn);
+      });
+
+      const progress = ((currentStep) / questions.length) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+    }
+
+    function selectOption(val) {
+      answers[`q${currentStep + 1}`] = val;
+      currentStep++;
+
+      if (currentStep < questions.length) {
+        showQuestion();
+      } else {
+        calculateResult();
+      }
+    }
+
+    function calculateResult() {
+      document.getElementById('progressBar').style.width = '100%';
+
+      const isCorset = answers.q1 === 'fit_corset' || answers.q7 === 'det_eyelets';
+      const isWarm = answers.q3 === 'color_warm';
+      const isPrint = answers.q5 === 'mat_print' || answers.q6 === 'geo_diagonal';
+      const isCurved = answers.q6 === 'geo_curved' || answers.q1 === 'fit_organic';
+      const isRustic = answers.q5 === 'mat_rustic';
+
+      let resultKey = 'LAURA';
+
+      if (isCorset) {
+        resultKey = 'ALEJANDRA';
+      } else if (isPrint) {
+        resultKey = 'GRETA';
+      } else if (isRustic || (isWarm && !isCurved)) {
+        resultKey = 'CRISTINA';
+      } else if (isCurved && isWarm) {
+        resultKey = 'AURORA';
+      } else if (isCurved && !isWarm) {
+        resultKey = 'ALICIA';
+      } else {
+        resultKey = 'LAURA';
+      }
+
+      showResult(resultKey);
+    }
+
+    function showResult(key) {
+      const p = products[key];
+      document.getElementById('quizScreen').classList.remove('active');
+      document.getElementById('progressContainer').style.display = 'none';
+      
+      document.getElementById('productName').innerText = p.name;
+      document.getElementById('productDescription').innerText = p.desc;
+      
+      document.getElementById('resultScreen').classList.add('active');
+    }
+  </script>
+</body>
+</html>
